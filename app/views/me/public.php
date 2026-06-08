@@ -1,0 +1,27 @@
+<?php $pageTitle = ($user['name'] ?? '用户') . ' 的主页'; require dirname(__DIR__) . '/layouts/main.php'; ?>
+<div class=\"page-shell\">
+<?php $displayName = trim((string)($user['name'] ?? '')) ?: ('用户' . (string)$user['id']); ?>
+<section class="user-center public-profile">
+  <div class="user-cover card" style="<?= !empty($user['cover']) ? 'background-image:linear-gradient(135deg,rgba(239,246,255,.72),rgba(236,254,255,.72)),url(' . htmlspecialchars($user['cover']) . ');background-size:cover;background-position:center;' : '' ?>">
+    <div class="profile-main"><div class="avatar-xl"><?php if (!empty($user['avatar'])): ?><img src="<?= htmlspecialchars($user['avatar']) ?>" alt=""><?php else: ?><?= htmlspecialchars(strtoupper(substr($displayName,0,1))) ?><?php endif; ?></div><div class="profile-info"><div class="profile-kicker">Developer Profile</div><h2><?= htmlspecialchars($displayName) ?></h2><div class="profile-email"><?= htmlspecialchars((string)($user['email'] ?? '')) ?></div><?php if (!empty($user['bio'])): ?><p class="profile-bio"><?= nl2br(htmlspecialchars((string)$user['bio'])) ?></p><?php endif; ?></div></div>
+  </div>
+  <section class="card publish-app-card">
+    <div class="publish-head"><h3>发布的应用</h3><div class="publish-tabs"><button type="button" class="active" data-pub-tab="plugin">插件</button><button type="button" data-pub-tab="theme">主题</button></div></div>
+    <div class="publish-pane active" data-pub-pane="plugin"><?php foreach (($publishedPlugins ?? []) as $app): ?><a class="app-line" href="/index.php?path=market/detail&id=<?= (int)$app['id'] ?>"><?= htmlspecialchars($app['name']) ?><span>v<?= htmlspecialchars($app['version']) ?></span></a><?php endforeach; ?><?php if (empty($publishedPlugins)): ?><div class="muted">暂无插件</div><?php endif; ?></div>
+    <div class="publish-pane" data-pub-pane="theme"><?php foreach (($publishedThemes ?? []) as $app): ?><a class="app-line" href="/index.php?path=market/detail&id=<?= (int)$app['id'] ?>"><?= htmlspecialchars($app['name']) ?><span>v<?= htmlspecialchars($app['version']) ?></span></a><?php endforeach; ?><?php if (empty($publishedThemes)): ?><div class="muted">暂无主题</div><?php endif; ?></div>
+  </section>
+<style>.user-center{display:grid;gap:18px}.user-cover{position:relative;overflow:hidden;padding:34px;background:linear-gradient(135deg,#eff6ff 0%,#fff 48%,#ecfeff 100%);border-color:#dbeafe;min-height:240px;display:flex;align-items:center;background-size:cover;background-position:center}.user-cover::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.92),rgba(255,255,255,.76) 48%,rgba(236,254,255,.86));z-index:0}.profile-main{position:relative;z-index:1;display:grid;grid-template-columns:112px minmax(0,1fr);gap:24px;align-items:center;width:100%;max-width:780px}.avatar-xl{width:112px;height:112px;border-radius:32px;background:linear-gradient(135deg,#2563eb,#06b6d4);display:grid;place-items:center;color:#fff;font-size:44px;font-weight:900;box-shadow:0 22px 60px rgba(37,99,235,.25);overflow:hidden;border:4px solid rgba(255,255,255,.72)}.avatar-xl img{width:100%;height:100%;object-fit:cover}.profile-info{min-width:0}.profile-kicker{display:inline-flex;padding:6px 12px;border-radius:999px;background:rgba(37,99,235,.10);color:#1d4ed8;font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}.profile-info h2{margin:14px 0 0;font-size:34px;line-height:1.08;letter-spacing:-.04em;color:#0f172a;overflow-wrap:anywhere}.profile-email{margin-top:8px;color:#475569;font-size:16px;font-weight:700;overflow-wrap:anywhere}.profile-bio{margin-top:14px;color:#334155;line-height:1.7}.publish-app-card{display:grid;gap:14px}.publish-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.publish-head h3{margin:0}.publish-tabs{display:inline-flex;background:#f8fafc;border-radius:999px;padding:4px;gap:4px}.publish-tabs button{border:0;background:transparent;border-radius:999px;padding:8px 14px;font-weight:900;color:#64748b;cursor:pointer}.publish-tabs button.active{background:#2563eb;color:#fff}.publish-pane{display:none}.publish-pane.active{display:block}.app-line{display:flex;justify-content:space-between;gap:12px;padding:12px;border-radius:12px;background:#f8fafc;text-decoration:none;color:#0f172a;margin-top:10px;font-weight:800}.app-line span{color:#94a3b8;font-size:12px}.muted{color:#64748b}@media(max-width:800px){.user-cover{padding:24px 18px;min-height:220px}.profile-main{grid-template-columns:82px minmax(0,1fr);gap:16px}.avatar-xl{width:82px;height:82px;border-radius:24px;font-size:32px}.profile-info h2{font-size:28px}.publish-head{align-items:flex-start}.publish-tabs button{padding:7px 12px}}@media(max-width:430px){.profile-main{grid-template-columns:1fr;text-align:center;justify-items:center}.profile-info h2{font-size:30px}.profile-email{text-align:center}}</style>
+
+<script>
+(function(){
+  document.addEventListener('click', function(e){
+    var btn=e.target.closest('[data-pub-tab]'); if(!btn) return;
+    var card=btn.closest('.publish-app-card'); if(!card) return;
+    var key=btn.getAttribute('data-pub-tab');
+    card.querySelectorAll('[data-pub-tab]').forEach(function(b){b.classList.toggle('active', b===btn);});
+    card.querySelectorAll('[data-pub-pane]').forEach(function(p){p.classList.toggle('active', p.getAttribute('data-pub-pane')===key);});
+  });
+})();
+</script>
+</div>
+<?php require dirname(__DIR__) . '/layouts/footer.php'; ?>
